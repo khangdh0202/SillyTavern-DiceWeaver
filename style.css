@@ -1,0 +1,928 @@
+/* Theme-aware palette: cards read the ACTIVE SillyTavern theme via
+   --SmartTheme* vars with fixed fallbacks. Outcome colors stay the universal
+   dice palette (green/red/gold — ST has no stable semantic good/bad var).
+   v0.6.0 layout (local/DESIGN-v0.6.md §3.1): grid avatar · text · result,
+   full-width dice strip underneath. */
+.dw-roll,
+.dw-hub-popup,
+#diceweaver-settings {
+    --dw-good: #4ade80;
+    --dw-bad: #f87171;
+    --dw-warn: #facc15;
+    --dw-info: #60a5fa;
+    --dw-surface: var(--black30a, rgba(0, 0, 0, 0.3));
+    --dw-chip: var(--white20a, rgba(255, 255, 255, 0.12));
+    --dw-border: var(--SmartThemeBorderColor, rgba(148, 163, 184, 0.3));
+    --dw-text: var(--SmartThemeBodyColor, #e6edf3);
+    --dw-muted: var(--SmartThemeEmColor, #8b949e);
+}
+
+.dw-roll {
+    --dw-tone: var(--dw-good);
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+        "avatar body result"
+        "strip strip strip";
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 8px;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px 14px 10px;
+    border-radius: 12px;
+    border: 1px solid color-mix(in srgb, var(--dw-tone) 55%, transparent);
+    border-left-width: 4px;
+    background: var(--dw-surface);
+    color: var(--dw-text);
+    box-sizing: border-box;
+    text-align: left;
+    font-style: normal;
+    line-height: 1.35;
+}
+
+.dw-roll.dw-fail,
+.dw-roll.dw-critfail {
+    --dw-tone: var(--dw-bad);
+}
+
+.dw-roll.dw-crit {
+    --dw-tone: var(--dw-warn);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--dw-warn) 22%, transparent);
+}
+
+.dw-roll.dw-critfail {
+    box-shadow: 0 0 14px color-mix(in srgb, var(--dw-bad) 22%, transparent);
+}
+
+.dw-roll.dw-damage {
+    --dw-tone: var(--dw-info);
+}
+
+.dw-avatar {
+    grid-area: avatar;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--dw-tone);
+    background: var(--dw-chip);
+    color: var(--dw-text);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.dw-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dw-body {
+    grid-area: body;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dw-char {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dw-muted);
+    text-transform: none;
+}
+
+.dw-action {
+    font-size: 14px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.dw-note {
+    font-size: 12px;
+    color: var(--dw-muted);
+    overflow-wrap: anywhere;
+}
+
+.dw-result {
+    grid-area: result;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 76px;
+    color: var(--dw-tone);
+}
+
+.dw-total {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.dw-outcome {
+    margin-top: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Dice strip ------------------------------------------------------------- */
+
+.dw-strip {
+    grid-area: strip;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    padding-top: 7px;
+    border-top: 1px solid var(--dw-border);
+    font-size: 12px;
+    color: var(--dw-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.dw-type,
+.dw-formula {
+    font-family: var(--monoFontFamily, monospace);
+    font-size: 11px;
+}
+
+.dw-die {
+    min-width: 1.6em;
+    padding: 1px 6px;
+    border-radius: 6px;
+    border: 1px solid var(--dw-border);
+    background: var(--dw-chip);
+    color: var(--dw-text);
+    font-weight: 700;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.dw-die-drop {
+    opacity: 0.5;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.dw-die-max {
+    border-color: var(--dw-warn);
+    color: var(--dw-warn);
+}
+
+.dw-die-min {
+    border-color: var(--dw-bad);
+    color: var(--dw-bad);
+}
+
+.dw-mod,
+.dw-eq {
+    color: var(--dw-text);
+}
+
+.dw-eq {
+    font-weight: 700;
+}
+
+.dw-tag {
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: 1px solid currentColor;
+}
+
+.dw-tag-adv,
+.dw-tag-advp {
+    color: var(--dw-good);
+}
+
+.dw-tag-dis,
+.dw-tag-disp {
+    color: var(--dw-bad);
+}
+
+.dw-actions {
+    margin-left: auto;
+    display: inline-flex;
+    gap: 2px;
+}
+
+/* Real <button>s with a reset style: icon look, keyboard-operable. */
+.dw-reroll,
+.dw-undo {
+    appearance: none;
+    background: none;
+    border: 0;
+    margin: 0;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--dw-muted);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+}
+
+.dw-reroll:hover,
+.dw-undo:hover,
+.dw-reroll:focus-visible,
+.dw-undo:focus-visible {
+    color: var(--dw-tone);
+    background: var(--dw-chip);
+    outline: none;
+}
+
+.dw-fresh {
+    animation: dw-enter 0.35s ease-out;
+}
+
+@keyframes dw-enter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dw-fresh {
+        animation: none;
+    }
+}
+
+/* Narrow screens: result block moves next to the text, never a fixed
+   margin (v0.5 overflowed 52px horizontally). */
+@media (max-width: 480px) {
+    .dw-roll {
+        grid-template-columns: 34px minmax(0, 1fr) auto;
+        column-gap: 10px;
+        padding: 10px 10px 8px;
+    }
+
+    .dw-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    .dw-result {
+        min-width: 0;
+    }
+
+    .dw-total {
+        font-size: 24px;
+    }
+
+    .dw-outcome {
+        font-size: 10px;
+        white-space: normal;
+        text-align: center;
+    }
+}
+
+#dw_preview {
+    margin: 6px 0;
+}
+
+#dw_preview:empty {
+    display: none;
+}
+
+/* ===========================================================================
+ * Roll Hub UI — send-form button
+ * ========================================================================= */
+
+#dw_button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 6px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    line-height: 1.1;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid var(--SmartThemeBorderColor);
+    background: var(--black30a);
+    color: var(--SmartThemeBodyColor);
+    transition: border-color var(--animation-duration-2x, 0.2s), box-shadow var(--animation-duration-2x, 0.2s), filter var(--animation-duration-2x, 0.2s);
+}
+
+#dw_button:hover,
+#dw_button:focus-visible {
+    filter: brightness(1.15);
+    border-color: var(--golden);
+}
+
+#dw_button .fa-dice-d20 {
+    color: var(--golden);
+    font-size: 1.05em;
+}
+
+#dw_button .dw-sendform-badge {
+    min-width: 2.2em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 0.78em;
+    font-variant-numeric: tabular-nums;
+    background: var(--white30a);
+    box-sizing: border-box;
+}
+
+#dw_button.dw-ready {
+    border-color: rgba(74, 222, 128, 0.65);
+    box-shadow: 0 0 12px rgba(74, 222, 128, 0.25);
+}
+
+#dw_button.dw-ready .dw-sendform-badge {
+    background: rgba(74, 222, 128, 0.3);
+}
+
+#dw_button.dw-warn {
+    border-color: rgba(251, 191, 36, 0.65);
+}
+
+#dw_button.dw-off {
+    opacity: 0.55;
+}
+
+/* Narrow send form: icon + badge only, the textarea keeps its room. */
+@media (max-width: 768px) {
+    #dw_button {
+        gap: 5px;
+        margin: 4px;
+        padding: 5px 8px;
+    }
+
+    #dw_button .dw-sendform-label {
+        display: none;
+    }
+}
+
+/* Jump-to-message highlight. */
+#chat .mes.dw-flash {
+    animation: dw-flash 1.8s ease-out;
+}
+
+@keyframes dw-flash {
+    0%,
+    30% {
+        box-shadow: inset 0 0 0 2px var(--golden, #facc15);
+        background-color: color-mix(in srgb, var(--golden, #facc15) 12%, transparent);
+    }
+
+    100% {
+        box-shadow: inset 0 0 0 2px transparent;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #chat .mes.dw-flash {
+        animation: none;
+        box-shadow: inset 0 0 0 2px var(--golden, #facc15);
+    }
+}
+
+/* ===========================================================================
+ * Roll Hub UI — dashboard popup
+ * ========================================================================= */
+
+.dw-hub-popup {
+    text-align: left;
+    color: var(--dw-text);
+}
+
+.dw-hub-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dw-hub-section-title {
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* Header ----------------------------------------------------------------- */
+
+.dw-hub-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid var(--dw-border);
+    background: var(--dw-surface);
+}
+
+.dw-hub-hero-icon {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--golden, var(--dw-warn));
+    border: 1px solid var(--dw-border);
+    background: var(--dw-chip);
+}
+
+.dw-hub-hero-main {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.dw-hub-hero-title {
+    font-size: 1.15em;
+    font-weight: 700;
+}
+
+.dw-hub-hero-sub {
+    margin-top: 2px;
+    font-size: 0.85em;
+    line-height: 1.45;
+    color: var(--dw-muted);
+}
+
+.dw-hub-hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Chips ------------------------------------------------------------------ */
+
+.dw-hub-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.78em;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid var(--dw-border);
+    background: var(--dw-surface);
+}
+
+.dw-hub-chip-good {
+    border-color: color-mix(in srgb, var(--dw-good) 60%, transparent);
+    background: color-mix(in srgb, var(--dw-good) 12%, transparent);
+}
+
+.dw-hub-chip-bad {
+    border-color: color-mix(in srgb, var(--dw-bad) 60%, transparent);
+    background: color-mix(in srgb, var(--dw-bad) 12%, transparent);
+}
+
+.dw-hub-chip-info {
+    border-color: color-mix(in srgb, var(--dw-info) 60%, transparent);
+    background: color-mix(in srgb, var(--dw-info) 12%, transparent);
+}
+
+.dw-hub-chip-muted {
+    color: var(--dw-muted);
+}
+
+/* Cards / stats ---------------------------------------------------------- */
+
+.dw-hub-card {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--dw-border);
+    background: var(--dw-surface);
+}
+
+.dw-hub-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px;
+}
+
+.dw-hub-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--dw-border);
+    background: var(--dw-surface);
+}
+
+.dw-hub-stat-value {
+    font-size: 1.3em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.dw-hub-stat-label {
+    font-size: 0.82em;
+    color: var(--dw-muted);
+}
+
+.dw-hub-stat-good .dw-hub-stat-value {
+    color: var(--dw-good);
+}
+
+.dw-hub-stat-crit .dw-hub-stat-value {
+    color: var(--dw-warn);
+}
+
+.dw-hub-stat-bad .dw-hub-stat-value {
+    color: var(--dw-bad);
+}
+
+/* Quick roll ------------------------------------------------------------- */
+
+.dw-hub-q-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.dw-hub-q-row .text_pole {
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.dw-hub-q-name {
+    flex: 1 1 160px;
+}
+
+.dw-hub-q-action {
+    flex: 2 1 220px;
+}
+
+.dw-hub-q-formula {
+    flex: 1 1 120px;
+    font-family: var(--monoFontFamily, monospace);
+}
+
+.dw-hub-q-dc {
+    flex: 0 1 80px;
+}
+
+.dw-hub-q-adv {
+    flex: 0 1 170px;
+}
+
+.dw-hub-q-formula[aria-invalid="true"] {
+    outline: 1px solid var(--dw-bad);
+}
+
+.dw-hub-q-error {
+    color: var(--dw-bad);
+    font-size: 0.85em;
+}
+
+.dw-hub-q-error:empty {
+    display: none;
+}
+
+.dw-hub-q-hint {
+    font-size: 0.78em;
+    color: var(--dw-muted);
+}
+
+/* Buttons ---------------------------------------------------------------- */
+
+.dw-hub-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.dw-hub-btn-primary {
+    border-color: color-mix(in srgb, var(--golden, #f8d300) 60%, transparent) !important;
+}
+
+.dw-hub-danger {
+    border-color: color-mix(in srgb, var(--dw-bad) 60%, transparent) !important;
+    color: var(--dw-bad);
+}
+
+.dw-hub-icon-btn {
+    margin: 0;
+    padding: 5px 8px;
+    min-width: 30px;
+}
+
+/* Filter bar + list ------------------------------------------------------ */
+
+.dw-hub-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.dw-hub-toolbar .text_pole {
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.dw-hub-toolbar .dw-hub-search {
+    flex: 2 1 200px;
+}
+
+.dw-hub-toolbar select {
+    flex: 1 1 140px;
+}
+
+.dw-hub-list-count {
+    margin-left: auto;
+    font-size: 0.82em;
+    color: var(--dw-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.dw-hub-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 46vh;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.dw-hub-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--dw-border);
+    border-left: 4px solid var(--dw-good);
+    background: var(--dw-surface);
+}
+
+.dw-hub-row.dw-hub-bad {
+    border-left-color: var(--dw-bad);
+}
+
+.dw-hub-row.dw-hub-crit {
+    border-left-color: var(--dw-warn);
+}
+
+.dw-hub-row-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.dw-hub-row-main:hover .dw-hub-row-action,
+.dw-hub-row-main:focus-visible .dw-hub-row-action {
+    text-decoration: underline;
+}
+
+.dw-hub-row-main:focus-visible {
+    outline: 2px solid var(--golden, var(--dw-warn));
+    outline-offset: 2px;
+}
+
+.dw-hub-row-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.dw-hub-row-chip {
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    font-weight: 600;
+    border: 1px solid var(--dw-border);
+    background: var(--dw-chip);
+}
+
+.dw-hub-chip-outcome {
+    font-size: 0.72em;
+}
+
+.dw-hub-row-total {
+    font-weight: 700;
+    font-size: 0.85em;
+    font-variant-numeric: tabular-nums;
+}
+
+.dw-hub-row-source {
+    margin-left: auto;
+    font-size: 0.72em;
+    color: var(--dw-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.dw-hub-row-action {
+    margin-top: 4px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.dw-hub-row-meta {
+    margin-top: 2px;
+    font-size: 0.75em;
+    color: var(--dw-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.dw-hub-row-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 4px;
+}
+
+.dw-hub-row-delete:hover {
+    color: var(--dw-bad);
+}
+
+.dw-hub-more {
+    align-self: center;
+}
+
+/* Empty state ------------------------------------------------------------ */
+
+.dw-hub-empty {
+    padding: 22px 12px;
+    text-align: center;
+}
+
+.dw-hub-empty-icon {
+    margin-bottom: 6px;
+    font-size: 26px;
+    color: var(--golden, var(--dw-warn));
+}
+
+.dw-hub-empty-title {
+    font-weight: 600;
+}
+
+.dw-hub-empty-sub {
+    margin-top: 4px;
+    font-size: 0.85em;
+    color: var(--dw-muted);
+}
+
+/* Footer ----------------------------------------------------------------- */
+
+.dw-hub-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.dw-hub-footer-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dw-hub-footer-note {
+    font-size: 0.75em;
+    color: var(--dw-muted);
+    text-align: center;
+}
+
+@media (max-width: 480px) {
+    .dw-hub-row {
+        flex-wrap: wrap;
+    }
+
+    .dw-hub-row-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .dw-hub-q-dc,
+    .dw-hub-q-adv {
+        flex: 1 1 40%;
+    }
+}
+
+/* ===========================================================================
+ * Settings drawer (v0.6.0: grouped)
+ * ========================================================================= */
+
+#diceweaver-settings .dw-group {
+    margin: 8px 0;
+    border: 1px solid var(--dw-border);
+    border-radius: 10px;
+    background: var(--dw-surface);
+}
+
+#diceweaver-settings .dw-group > summary {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 600;
+    list-style-position: inside;
+}
+
+#diceweaver-settings .dw-group-body {
+    padding: 0 12px 12px;
+}
+
+#diceweaver-settings .dw-group-body > label:not(.checkbox_label),
+#diceweaver-settings .dw-field-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 3px;
+}
+
+#diceweaver-settings .dw-hint {
+    display: block;
+    margin-top: 3px;
+    color: var(--dw-muted);
+    font-size: 0.85em;
+    line-height: 1.4;
+}
+
+#diceweaver-settings .dw-formula-preview {
+    font-variant-numeric: tabular-nums;
+}
+
+#diceweaver-settings .dw-formula-preview.dw-invalid {
+    color: var(--dw-bad);
+}
+
+#diceweaver-settings .dw-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+#diceweaver-settings .dw-row .menu_button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    width: auto;
+    white-space: nowrap;
+}
+
+#diceweaver-settings .dw-number {
+    width: 80px;
+}
+
+.dw-ladder-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 6px;
+}
+
+.dw-ladder-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    font-size: 0.85em;
+    color: var(--dw-muted);
+}
+
+.dw-ladder-row input {
+    width: 100%;
+    margin: 0;
+}
+
+#diceweaver-settings .dw-char-badge {
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    border: 1px solid color-mix(in srgb, var(--dw-info) 60%, transparent);
+}
+
+#diceweaver-settings .dw-char-badge:empty {
+    display: none;
+}

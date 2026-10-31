@@ -1,0 +1,26 @@
+BK/
+local/
+node_modules/
+.env
+*.log
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.code-workspace
+*.lnk
+
+# Dev-only: never published
+test.mjs
+tests/
+.github/workflows/
+AGENTS.md
+CLAUDE.md
+.claude/
+.kilo/
+*.bak
+*.orig
+.env.*
+*.pem
+*.key

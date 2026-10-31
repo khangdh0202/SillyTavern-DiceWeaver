@@ -1,0 +1,11 @@
+{
+    "display_name": "Dice Weaver",
+    "loading_order": 100,
+    "requires": [],
+    "optional": [],
+    "js": "index.js",
+    "css": "style.css",
+    "author": "kdturtle",
+    "version": "0.6.0",
+    "homePage": "https://github.com/khangdh0202/SillyTavern-DiceWeaver"
+}
