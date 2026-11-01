@@ -213,6 +213,8 @@ Dice Weaver never imports or depends on other extensions. In [Storyline](https:/
 
 By default the AI never learns roll outcomes. Turn on **Feed roll results to the AI** (global, or per character) and the last few unseen results are injected as a short instruction — *"these are decided, narrate the consequence; never mention dice numbers"* — for the **next turn only**, then marked as seen. Nothing is written into messages.
 
+**Continue:** when you press *Continue* on a reply that contains rolls, the outcomes of the rolls **in that reply** are injected for the continuation (even after a reload or a re-roll), so the AI picks up from the real result instead of guessing. A re-rolled or undone roll is treated as unseen again.
+
 ## 14. FAQ & troubleshooting
 
 **The AI never rolls.**

@@ -131,9 +131,33 @@ export function createResultsFeed(deps) {
        (regenerate used to find nothing unseen and clear them). `quiet` is a
        background generation (summarize, other extensions): it must not mark
        results seen before the real reply gets them. */
+    /* Continue: the model extends a reply that already ENDS with a roll it
+       cannot read (slim marker) — without the outcome it narrates the next
+       beat blind ("the blow lands" after a failed roll). Feed the outcomes of
+       the rolls INSIDE the message being continued, seen or not (the prompt
+       key was cleared by a chat switch / reload, and a roll may have been
+       re-rolled since). Nothing to feed → keep whatever the key holds. */
+    function handleContinue() {
+        if (!getSettings().feed_results_to_ai) return;
+        const chat = Array.isArray(getContext()?.chat) ? getContext().chat : [];
+        const target = chat[chat.length - 1];
+        if (!target || target.is_user) return;
+        const rolls = (Array.isArray(target.extra?.diceRolls) ? target.extra.diceRolls : [])
+            .filter(roll => roll?.id && feedOnFor(roll))
+            .slice(-MAX_LINES)
+            .map(roll => ({ messageId: chat.length - 1, roll }));
+        if (!rolls.length) return;
+        setPromptKey(buildFeedText(rolls));
+        markSeen(rolls.map(({ roll }) => roll.id));
+    }
+
     function handleGenerationStarted(type, isDryRun) {
         if (isDryRun) return;
-        if (['continue', 'swipe', 'regenerate', 'impersonate', 'quiet'].includes(type)) return;
+        if (type === 'continue') {
+            handleContinue();
+            return;
+        }
+        if (['swipe', 'regenerate', 'impersonate', 'quiet'].includes(type)) return;
         if (!getSettings().feed_results_to_ai) {
             clearPromptKey();
             return;

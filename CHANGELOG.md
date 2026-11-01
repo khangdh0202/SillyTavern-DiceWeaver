@@ -12,8 +12,14 @@ Fixes on top of 0.6.0 (`manifest.json` still says 0.6.0).
 - **Bogus "the reply was cut off" rolls and duplicate rolls**: a message that is still
   being streamed is never tag-parsed (an unfinished `<roll ...` looked like a cut-off tag,
   and a second parse duplicated the roll). It is parsed once the text is final.
-- **Phantom rolls in the Hub**: at the end of a generation, payloads whose marker the
-  finished reply no longer contains are dropped.
+- **Phantom rolls in the Hub**: at the end of a generation, payloads created in that turn
+  whose marker the finished reply no longer contains are dropped (older rolls are never
+  touched — a Continue that loses markers cannot delete them).
+- **Re-roll reverted by a swipe after a reload**: re-roll/undo now update the per-swipe
+  copy too, and swiping back prefers the newer result.
+- A blocked re-roll (extension or character switched off) shows why instead of doing nothing.
+- **Results feed + Continue**: Continue feeds the outcomes of the rolls in the reply being
+  continued (also after a reload); re-rolled/undone rolls are fed again.
 - **Salvaged (cut-off) tags** use their `note` as the action text instead of an English
   placeholder.
 - The forced-roll directive (also returned by `DiceWeaverAPI.getForcedDirective()`) is now

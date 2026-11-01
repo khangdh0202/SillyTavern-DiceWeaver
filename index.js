@@ -55,6 +55,7 @@ let currentTurnMessageId = null;
 let turnStartIndex = null;
 /* True between a real turn's GENERATION_STARTED and GENERATION_ENDED. */
 let generationInFlight = false;
+let turnStartedAt = null;
 
 /* The message being STREAMED right now must never be tag-parsed: its text is
    partial (an unfinished `<roll ...` looks like a cut-off tag → bogus
@@ -645,6 +646,7 @@ jQuery(() => {
         currentTurnMessageId = null;
         turnStartIndex = null;
         generationInFlight = false;
+        turnStartedAt = null;
         updateDirective();
         resultsFeed.handleChatChanged();
         engine.invalidateAvatarCache();
@@ -673,6 +675,7 @@ jQuery(() => {
         currentTurnMessageId = null;
         turnStartIndex = Array.isArray(getContext().chat) ? getContext().chat.length : null;
         generationInFlight = true;
+        turnStartedAt = Date.now();
         if (!forcedRoll && ['normal', 'swipe', 'regenerate'].includes(type)) {
             detectForcedRollFromLastUserMessage();
         }
@@ -695,7 +698,8 @@ jQuery(() => {
         /* Final text is in: drop payloads whose marker the finished reply no
            longer contains (left over by any mid-stream parse) — otherwise
            they show up as phantom rolls in the Hub. */
-        if (turnId != null) store.reconcileEditedMessage(turnId);
+        if (turnId != null && turnStartedAt != null) store.reconcileEditedMessage(turnId, { createdAfter: turnStartedAt });
+        turnStartedAt = null;
         currentTurnMessageId = null;
         turnStartIndex = null;
         forcedRoll = null;

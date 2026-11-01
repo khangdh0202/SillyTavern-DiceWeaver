@@ -213,6 +213,8 @@ Dice Weaver không bao giờ import hay phụ thuộc extension khác. Trong cha
 
 Mặc định AI không bao giờ biết kết quả roll. Bật **Đưa kết quả roll vào AI** (global, hoặc theo nhân vật) và vài kết quả chưa xem sẽ được chèn dưới dạng một lệnh ngắn — *"những điều này đã định đoạt, tường thuật hậu quả; không bao giờ nhắc số dice"* — chỉ áp dụng cho **lượt kế tiếp**, sau đó được đánh dấu đã xem. Không có gì được ghi vào tin nhắn.
 
+**Continue:** khi bạn bấm *Continue* trên một reply có roll, kết quả của các roll **trong chính reply đó** được chèn cho phần viết tiếp (kể cả sau khi F5 hoặc roll lại), để AI kể tiếp theo đúng kết quả thay vì đoán. Roll đã roll lại hoặc hoàn tác được coi như chưa gửi cho AI.
+
 ## 14. Hỏi đáp & xử lý sự cố
 
 **AI không bao giờ roll.**

@@ -321,7 +321,11 @@ export function createRollStore(deps) {
        MESSAGE_EDITED: drop every payload whose marker no longer exists in the
        message text, and re-sync the CURRENT swipe's per-swipe store (other
        swipes re-materialize on MESSAGE_SWIPED from their own store). */
-    function reconcileEditedMessage(messageId) {
+    /* createdAfter (ms timestamp): only payloads stamped at/after it may be
+       dropped. The generation-end cleanup passes the turn start so a reply
+       whose markers got lost on CONTINUE (e.g. a prompt regex rewrote the
+       continued text) never deletes the rolls that were already there. */
+    function reconcileEditedMessage(messageId, { createdAfter = null } = {}) {
         const context = getContext();
         const mes = context.chat[messageId];
         if (!mes || !Array.isArray(mes.extra?.diceRolls) || !mes.extra.diceRolls.length) return;
@@ -332,7 +336,8 @@ export function createRollStore(deps) {
         while ((match = re.exec(text)) !== null) {
             present.add((match[1] ?? '').toLowerCase());
         }
-        const kept = mes.extra.diceRolls.filter(roll => roll?.id && present.has(String(roll.id).toLowerCase()));
+        const protectedRoll = roll => createdAfter != null && !(Number(roll?.ts) >= createdAfter);
+        const kept = mes.extra.diceRolls.filter(roll => roll?.id && (present.has(String(roll.id).toLowerCase()) || protectedRoll(roll)));
         if (kept.length === mes.extra.diceRolls.length) return;
         mes.extra.diceRolls = kept;
         bumpRollsVersion();
