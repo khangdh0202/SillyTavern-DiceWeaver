@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Roll results → AI context (opt-in, DEFAULT OFF — decision D1).
    Dependency-injected, node-testable. A short SYSTEM extension prompt carries
    up to 3 not-yet-seen roll outcomes into the NEXT generation; nothing is

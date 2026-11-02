@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Theme-aware palette: cards read the ACTIVE SillyTavern theme via
    --SmartTheme* vars with fixed fallbacks. Outcome colors stay the universal
    dice palette (green/red/gold — ST has no stable semantic good/bad var).

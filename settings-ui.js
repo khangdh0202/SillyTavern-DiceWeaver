@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Settings drawer + per-character fieldset (dependency-injected).
    createSettingsUI({ jquery, getSettings, saveSettingsDebounced, updateDirective,
    charKeyForName, getContext, performRoll, makeId, buildRollCard, getT, toastr?,

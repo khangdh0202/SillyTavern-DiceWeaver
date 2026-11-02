@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Marker → DOM rendering engine (dependency-injected, node-testable).
    createRenderEngine({ getContext, updateMessageBlock, document?, NodeFilter? })
    No SillyTavern imports at top level; dice.js helpers are pure. */

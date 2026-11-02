@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 import { extension_settings, getContext, saveMetadataDebounced } from '../../../extensions.js';
 import { saveChatDebounced, saveSettingsDebounced, setExtensionPrompt, extension_prompt_types, extension_prompt_roles, updateMessageBlock, addOneMessage } from '../../../../script.js';
 import { eventSource, event_types } from '../../../events.js';

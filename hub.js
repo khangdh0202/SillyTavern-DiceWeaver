@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* ===========================================================================
  * Roll Hub UI — send-form button + dashboard popup (dependency-injected).
  * Anchors visually next to #character-state-button when present; never

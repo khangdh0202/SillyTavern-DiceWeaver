@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* UI strings EN/VI + resolver (pure, node-testable) — decision D3.
    Directive text for the MODEL stays English on purpose (models follow EN
    better); only user-facing UI is localized. */

@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 export const OUTCOMES = {
     CRIT: 'crit',
     CRITFAIL: 'critfail',

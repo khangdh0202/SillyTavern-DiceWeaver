@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Pure settings layer — no SillyTavern imports, node-testable.
    index.js wraps these with live state (extension_settings + getContext). */
 

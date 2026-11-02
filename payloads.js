@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Roll payload factory + stored-payload normalization (pure, node-testable).
    The payload in mes.extra.diceRolls is the single source of truth for cards,
    the Hub, the results feed and the public API. New payloads carry ts +

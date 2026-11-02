@@ -1,3 +1,4 @@
+/* Dice Weaver — Copyright (C) 2026 kdturtle — GPL-3.0, see LICENSE. */
 /* Roll storage + message mutations (dependency-injected, node-testable).
    createRollStore({ getContext, addOneMessage, saveChatDebounced, getSettings,
    getCharSettings, renderMessageRolls, injectRollCards }) */
