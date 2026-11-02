@@ -6,6 +6,8 @@
 
 [🌐 English](README.md) | [🇻🇳 Tiếng Việt](README.vi.md) · [📖 Tài liệu đầy đủ (VI)](USER_GUIDE.vi.md) · [📖 Full Documentation (EN)](USER_GUIDE.md)
 
+<img src="docs/screenshots/roll-card.webp" alt="Dice Weaver roll card: Nat 20 critical" width="720">
+
 </div>
 
 ---
@@ -35,6 +37,10 @@ Bạn chơi truyện. Extension giữ sự công bằng.
 - **Quy tắc theo nhân vật** — công thức, DC, trigger và công tắc bật/tắt riêng cho từng card nhân vật, key theo card.
 - **An toàn với swipe** — mỗi vị trí swipe giữ roll riêng; qua lại swipe không mất/không nhân bản thẻ.
 - **UI tiếng Việt & English** — mặc định English; chọn Tiếng Việt (hoặc *Auto* = theo SillyTavern) trong settings.
+
+<p align="center"><img src="docs/screenshots/dice-panel.webp" alt="Dice Weaver Roll Hub" width="340"></p>
+
+<p align="center"><em>Roll Hub: tung nhanh, thống kê và lịch sử tung có tìm kiếm.</em></p>
 
 ## Triết lý thiết kế
 
@@ -72,6 +78,16 @@ Clone hoặc copy repo vào một trong hai thư mục extensions rồi reload S
 **Không cần cấu hình gì để bắt đầu.** Mặc định AI sẽ roll khi kết quả mơ hồ, dùng d20 + công thức stat. Mở ⚙ Extensions → Dice Weaver để tinh chỉnh mode, công thức, DC và quy tắc từng nhân vật (xem guide).
 
 **Xử lý sự cố:** nút không hiện — xem console trình duyệt (F12) có log Dice Weaver không, kiểm tra extension có trong danh sách và đang bật ở panel Extensions (**Manage extensions**), rồi reload bằng F5. Tên thư mục không quan trọng — cài từ Git URL sẽ tạo `SillyTavern-DiceWeaver`, bản copy thủ công có thể tên `st-diceweaver`; cả hai đều chạy.
+
+## Thuộc một bộ extension
+
+Chạy độc lập được, và kết hợp được với các extension cùng tác giả:
+
+| Extension | Thêm gì |
+|---|---|
+| [Storyline](https://github.com/khangdh0202/SillyTavern-Storyline) | Chế độ chat người kể chuyện: bạn nhập vai nhân vật chính, AI kể cả thế giới |
+| [Character State](https://github.com/khangdh0202/SillyTavern-CharacterStats) | Bảng nhân vật lâu dài, AI tự cập nhật |
+| [Memory Weaver](https://github.com/khangdh0202/SillyTavern-MemoryWeaver) | Bộ nhớ truyện dài hạn |
 
 ## Tài liệu
 

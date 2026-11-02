@@ -6,6 +6,8 @@
 
 [🌐 English](README.md) | [🇻🇳 Tiếng Việt](README.vi.md) · [📖 Full Documentation (EN)](USER_GUIDE.md) · [📖 Tài liệu đầy đủ (VI)](USER_GUIDE.vi.md)
 
+<img src="docs/screenshots/roll-card.webp" alt="Dice Weaver roll card: Nat 20 critical" width="720">
+
 </div>
 
 ---
@@ -35,6 +37,10 @@ You play the story. The extension plays fair.
 - **Per-character rules** — different formula, DC, triggers and an on/off switch for each character card, keyed to the card itself.
 - **Swipe-safe** — every swipe position keeps its own rolls; swiping back and forth never loses or duplicates a card.
 - **English & Tiếng Việt UI** — English by default; switch to Tiếng Việt (or *Auto* = follow SillyTavern) in settings.
+
+<p align="center"><img src="docs/screenshots/dice-panel.webp" alt="Dice Weaver Roll Hub" width="340"></p>
+
+<p align="center"><em>The Roll Hub: quick roll, stats and a searchable roll history.</em></p>
 
 ## Design principles
 
@@ -72,6 +78,16 @@ Clone or copy the repository into an extensions folder, then reload SillyTavern 
 **No configuration needed to start.** Out of the box the AI rolls on uncertain outcomes with a default d20 + stat formula. Open ⚙ Extensions → Dice Weaver to tune modes, formulas, DC and per-character rules (see the guide).
 
 **Troubleshoot:** if the button doesn't appear — check the browser console (F12) for Dice Weaver messages, confirm the extension is listed and enabled in the Extensions panel (**Manage extensions**), and reload with F5. The folder name doesn't matter — installing from the Git URL creates `SillyTavern-DiceWeaver`, a manual copy may be called `st-diceweaver`; both work.
+
+## Part of a suite
+
+Works on its own, and also plugs into these companion extensions by the same author:
+
+| Extension | What it adds |
+|---|---|
+| [Storyline](https://github.com/khangdh0202/SillyTavern-Storyline) | Storyteller chat mode: you play the main character, the AI narrates the world |
+| [Character State](https://github.com/khangdh0202/SillyTavern-CharacterStats) | Persistent character sheets the AI keeps up to date |
+| [Memory Weaver](https://github.com/khangdh0202/SillyTavern-MemoryWeaver) | Long-term story memory |
 
 ## Documentation
 
