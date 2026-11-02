@@ -83,6 +83,60 @@ function isTurnGeneration(type) {
 /* The AI message produced by the CURRENT turn, or null. Prefers the id from
    CHARACTER_MESSAGE_RENDERED; otherwise the last chat message when it is an
    AI message created (or, for swipe/continue, re-generated) by this turn. */
+/* Continue after a tool-only turn: ST appends the continuation to the LAST
+   message, which is our system roll message. That message renders
+   display_text (the markers) only, so the new prose was saved but never
+   shown. Move the prose into its own reply after the roll card; an echoed
+   copy of the player's message at its start is dropped. Also runs on chat
+   load, so a roll message already holding hidden prose is repaired. */
+async function rescueContinuedRollMessage() {
+    const context = getContext();
+    const chat = context.chat;
+    if (!Array.isArray(chat) || !chat.length) return false;
+    const index = chat.length - 1;
+    const mes = chat[index];
+    if (!mes?.is_system || !Array.isArray(mes.extra?.diceRolls) || typeof mes.extra.display_text !== 'string') return false;
+    let prose = stripMarkers(String(mes.mes ?? '')).trim();
+    if (!prose) return false;
+    const lastUser = chat.slice(0, index).reverse().find(item => item?.is_user);
+    const userText = String(lastUser?.mes ?? '').trim();
+    if (userText && prose.startsWith(userText)) prose = prose.slice(userText.length).trim();
+
+    const { diceRolls, display_text: markerText, isSmallSys, ...replyExtra } = mes.extra;
+    /* Character State event markers point into extra.csEvents; without that
+       list they would show as raw text in the moved reply. */
+    if (!Array.isArray(replyExtra.csEvents)) prose = prose.replace(/^[ \t]*\[CSEVENT:#\d+[^\]]*\][ \t]*\n*/gm, '').trim();
+    mes.mes = markerText;
+    mes.extra = { isSmallSys, diceRolls, display_text: markerText };
+    if (Array.isArray(mes.swipes)) {
+        mes.swipes = [markerText];
+        mes.swipe_id = 0;
+        mes.swipe_info = [{ send_date: mes.send_date, extra: structuredClone(mes.extra) }];
+    }
+    updateMessageBlock(index, mes);
+    engine.renderMessageRolls(index, true);
+    if (prose) {
+        const reply = {
+            name: context.name2,
+            is_user: false,
+            is_system: false,
+            send_date: mes.send_date,
+            mes: prose,
+            gen_started: mes.gen_started,
+            gen_finished: mes.gen_finished,
+            extra: replyExtra,
+            swipes: [prose],
+            swipe_id: 0,
+            swipe_info: [{ send_date: mes.send_date, gen_started: mes.gen_started, gen_finished: mes.gen_finished, extra: structuredClone(replyExtra) }],
+        };
+        chat.push(reply);
+        await addOneMessage(reply);
+        await eventSource.emit(event_types.CHARACTER_MESSAGE_RENDERED, chat.length - 1, 'normal');
+    }
+    saveChatDebounced();
+    return true;
+}
+
 function resolveTurnMessageId() {
     return resolveTurnMessage({
         chat: getContext().chat,
@@ -654,6 +708,7 @@ jQuery(() => {
         engine.renderAllRolls();
         engine.scheduleRollSweep(700);
         engine.scheduleRollSweep(2200);
+        rescueContinuedRollMessage().catch(error => console.error('[Dice Weaver] Repairing a continued roll message failed:', error));
     });
     eventSource.on(event_types.APP_READY, () => {
         migrateCharSettings(getSettings(), getContext(), saveSettingsDebounced);
@@ -683,6 +738,13 @@ jQuery(() => {
         updateDirective();
     });
     eventSource.on(event_types.GENERATION_ENDED, async () => {
+        if (lastGenerationType === 'continue') {
+            try {
+                await rescueContinuedRollMessage();
+            } catch (error) {
+                console.error('[Dice Weaver] Moving a continuation out of the roll message failed:', error);
+            }
+        }
         if (turnStartIndex == null && currentTurnMessageId == null) return;
         /* B1: a turn that ended WITHOUT a render event (streaming + stealth
            tool) still produced an AI message - parse its tags and count it. */

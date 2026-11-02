@@ -18,6 +18,11 @@ Fixes on top of 0.6.0 (`manifest.json` still says 0.6.0).
 - **Re-roll reverted by a swipe after a reload**: re-roll/undo now update the per-swipe
   copy too, and swiping back prefers the newer result.
 - A blocked re-roll (extension or character switched off) shows why instead of doing nothing.
+- **Continue after a roll card made the new text disappear**: when the last message was a
+  roll card, SillyTavern's Continue appended the new text to that card, which only shows the
+  card. The text now moves into its own reply after the card (an echoed copy of your
+  message is dropped). A roll card that already holds hidden text is repaired when the chat
+  opens.
 - **Results feed + Continue**: Continue feeds the outcomes of the rolls in the reply being
   continued (also after a reload); re-rolled/undone rolls are fed again.
 - **Salvaged (cut-off) tags** use their `note` as the action text instead of an English
