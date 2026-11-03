@@ -2,9 +2,7 @@
 
 All notable changes to this project. Versions match `manifest.json`.
 
-## [Unreleased]
-
-Fixes on top of 0.6.0 (`manifest.json` still says 0.6.0).
+## [0.6.1] — 2026-11-03
 
 ### Changed
 - **"Feed roll results to the AI" is on by default.** With models that cannot call tools (Tag

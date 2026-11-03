@@ -19,7 +19,7 @@ body:
     attributes:
       label: Dice Weaver version / Phiên bản Dice Weaver
       description: Extensions panel → Manage extensions
-      placeholder: "0.6.0"
+      placeholder: "0.6.1"
     validations:
       required: true
   - type: input
