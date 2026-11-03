@@ -31,7 +31,7 @@ Bạn chơi truyện. Extension giữ sự công bằng.
 
 - **Hai đường kích hoạt** — AI kết thúc reply bằng tag `<roll>`, hoặc gọi tool ẩn `roll_dice` khi model hỗ trợ function calling. Chế độ Auto tự chọn và tự fallback.
 - **Dice thật, luật thật** — công thức stat → modifier (mặc định `round(({stat}-50)/15)`), DC (số hoặc thang tên `easy/normal/hard/extreme`), advantage/disadvantage cộng xúc xắc phạt (`advp`/`disp`), crit natural 20 / thất bại natural 1, công thức nhiều nhóm như `1d20+3`, `2d6+1d4` và roll sát thương (`kind="damage"`). Xúc xắc phạt và roll sát thương đến từ tag `<roll>` (xúc xắc phạt còn dùng được qua `/roll`, Roll nhanh và API) — tool `roll_dice` chỉ có check `adv`/`dis` thường.
-- **Thẻ kết quả kiểu game** — avatar, hành động, tổng cỡ lớn kèm nhãn kết quả rõ ràng (*Thành công / Thất bại / Nat 20 · Chí mạng / Nat 1 · Thảm bại / Sát thương*) và dải hiện từng viên xúc xắc (viên bị loại do lợi thế/bất lợi bị gạch ngang), modifier, DC — chèn vào tin nhắn, có nút roll lại và hoàn tác ngay trên thẻ. Kết quả roll không lọt vào prompt của model (marker tối giản `[dice:#id]`, không có số trong text); tuỳ chọn (opt-in, mặc định tắt) vài kết quả chưa xem được đưa vào AI như một dòng lệnh ngắn để nó tường thuật hậu quả.
+- **Thẻ kết quả kiểu game** — avatar, hành động, tổng cỡ lớn kèm nhãn kết quả rõ ràng (*Thành công / Thất bại / Nat 20 · Chí mạng / Nat 1 · Thảm bại / Sát thương*) và dải hiện từng viên xúc xắc (viên bị loại do lợi thế/bất lợi bị gạch ngang), modifier, DC — chèn vào tin nhắn, có nút roll lại và hoàn tác ngay trên thẻ. Kết quả roll không lọt vào prompt của model (marker tối giản `[dice:#id]`, không có số trong text); mặc định vài kết quả chưa xem được đưa vào AI (trừ roll qua tool — model đã nhận rồi; có thể tắt) như một dòng lệnh ngắn để nó tường thuật hậu quả.
 - **Trigger bắt buộc** — gõ từ khoá của bạn, lượt trả lời kế tiếp của AI *bắt buộc* roll nếu tình huống xảy ra.
 - **Bảng Roll Hub** — nút cạnh ô nhập tin với badge sống: form Roll nhanh (giống `/roll`), thống kê tỉ lệ thành công / Nat 20 / Nat 1 / trung bình d20, lịch sử roll lọc/tìm được — **bấm vào một roll để nhảy tới tin nhắn đó**, roll lại / hoàn tác / xoá từng lần, xoá hàng loạt, xuất JSON.
 - **Quy tắc theo nhân vật** — công thức, DC, trigger và công tắc bật/tắt riêng cho từng card nhân vật, key theo card.
@@ -44,7 +44,7 @@ Bạn chơi truyện. Extension giữ sự công bằng.
 
 ## Triết lý thiết kế
 
-- **AI không bao giờ tự roll.** Model chỉ khai *làm gì*; extension quyết định *làm tốt tới đâu*. Dữ liệu kết quả nằm trong payload + UI; model nhiều nhất chỉ thấy một dòng opt-in ngắn báo kết quả để tường thuật, không bao giờ thấy số dice để tự bịa.
+- **AI không bao giờ tự roll.** Model chỉ khai *làm gì*; extension quyết định *làm tốt tới đâu*. Dữ liệu kết quả nằm trong payload + UI; model nhiều nhất chỉ thấy một dòng ngắn báo kết quả (bật mặc định, có thể tắt) để tường thuật, không bao giờ thấy số dice để tự bịa.
 - **Ý định, không phải lòng tin.** Tag hỏng, reply bị cắt, text giả dạng tool-call: được cứu hoặc bị chặn có giám sát; model không thể tự bịa kết quả.
 - **Mọi thứ local và theo chat.** Roll nằm trong file lưu chat. Không có gì rời khỏi máy bạn.
 - **Chạy với mọi model.** Tag protocol không cần gì đặc biệt; function calling được dùng tự động khi có.

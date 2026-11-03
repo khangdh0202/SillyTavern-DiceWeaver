@@ -34,7 +34,7 @@ Dice Weaver splits a dice check into two halves:
 | **Intent** | The AI | One short line: *"character X attempts Y, using stat Z, difficulty DC"* |
 | **Outcome** | The extension | The real roll: `d20 + modifier (from stat) vs DC`, crit rules applied |
 
-The AI never sees or invents dice numbers. Cards are injected into the chat as UI; the marker left in the message text is a slim `[dice:#id]` with no outcome data, and roll results are stripped from prompt history. By default nothing roll-related enters the model's context. If you want the AI to *react* to outcomes, there is an opt-in setting ("Feed roll results to the AI") that injects the last few unseen results as a short instruction for the next turn only.
+The AI never sees or invents dice numbers. Cards are injected into the chat as UI; the marker left in the message text is a slim `[dice:#id]` with no outcome data, and roll results are stripped from prompt history. So the AI can *react* to outcomes, the setting "Feed roll results to the AI" (on by default) injects the last few unseen results as a short instruction for the next turn only. Rolls made through the `roll_dice` tool are skipped: the tool result already told the model (a re-roll is fed again). Turn it off and nothing roll-related enters the model's context.
 
 ## 2. Getting started
 
@@ -91,7 +91,7 @@ Open ⚙ **Extensions → Dice Weaver**. Settings are grouped into five collapsi
 | Test roll | — | Preview a card with the current rules |
 | Trigger keyword | (empty) | Your keyword for the forced trigger (section 7) |
 | Trigger formula | (empty) | e.g. `1d20+3` — used by the forced roll instead of the stat formula |
-| Feed roll results to the AI | OFF | Opt-in (section 13): unseen results are injected as a short instruction for the **next** turn only |
+| Feed roll results to the AI | ON | (section 13): unseen results are injected as a short instruction for the **next** turn only |
 | Switch to tags when the AI ignores the roll tool | ON | Auto mode: after N AI replies in a row without any roll, the tag directive is added as a reminder |
 | Tool-less replies before switching | 3 | That N (1–20). Any roll resets the counter; so do a chat switch and the Hub's *Reset counter* |
 
@@ -236,7 +236,7 @@ Check the per-character rules (section 6) — a character override beats the glo
 Mode is *Function Call only* but your current model/API can't do function calling. Switch to Auto or Tag only — rolls keep working through tags either way.
 
 **Can the AI cheat?**
-No. Outcomes come only from the extension's RNG; hallucinated outcome tags are stripped, malformed intents are repaired or rejected, and message markers carry no numbers. The only channel to the model is the opt-in results feed (section 13), which instructs it to narrate consequences — never to quote dice.
+No. Outcomes come only from the extension's RNG; hallucinated outcome tags are stripped, malformed intents are repaired or rejected, and message markers carry no numbers. The only channel to the model is the results feed (section 13, on by default), which instructs it to narrate consequences — never to quote dice.
 
 ---
 

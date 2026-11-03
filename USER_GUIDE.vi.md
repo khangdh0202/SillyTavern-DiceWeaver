@@ -34,7 +34,7 @@ Dice Weaver tách một lần kiểm tra dice thành hai nửa:
 | **Ý định (intent)** | AI | Một dòng ngắn: *"nhân vật X làm Y, dùng stat Z, độ khó DC"* |
 | **Kết quả (outcome)** | Extension | Roll thật: `d20 + modifier (từ stat) vs DC`, áp luật crit |
 
-AI không bao giờ nhìn thấy hay tự sinh số dice. Thẻ kết quả được chèn vào chat dưới dạng UI; marker để lại trong text là dạng tối giản `[dice:#id]` không chứa kết quả, và số liệu roll bị loại khỏi prompt history. Mặc định không gì liên quan tới roll vào context của model. Nếu bạn muốn AI *phản ứng* với kết quả, có setting opt-in ("Đưa kết quả roll vào AI") chèn vài kết quả chưa xem dưới dạng một dòng lệnh ngắn, chỉ áp dụng cho lượt kế tiếp.
+AI không bao giờ nhìn thấy hay tự sinh số dice. Thẻ kết quả được chèn vào chat dưới dạng UI; marker để lại trong text là dạng tối giản `[dice:#id]` không chứa kết quả, và số liệu roll bị loại khỏi prompt history. Để AI *phản ứng* với kết quả, setting "Đưa kết quả roll vào AI" (bật mặc định) chèn vài kết quả chưa xem dưới dạng một dòng lệnh ngắn, chỉ áp dụng cho lượt kế tiếp. Roll qua tool `roll_dice` được bỏ qua vì kết quả tool đã báo cho model (roll lại thì được đưa vào lại). Tắt setting này thì không gì liên quan tới roll vào context của model.
 
 ## 2. Bắt đầu
 
@@ -91,7 +91,7 @@ Mở ⚙ **Extensions → Dice Weaver**. Settings chia thành 5 nhóm gập đư
 | Test roll | — | Xem trước thẻ với luật hiện tại |
 | Từ khoá trigger | (rỗng) | Từ khoá của bạn cho trigger bắt buộc (mục 7) |
 | Công thức khi trigger | (rỗng) | vd `1d20+3` — dùng cho roll bắt buộc thay công thức stat |
-| Đưa kết quả roll vào AI | TẮT | Opt-in (mục 13): kết quả chưa xem được chèn làm lệnh ngắn cho **lượt kế tiếp** |
+| Đưa kết quả roll vào AI | BẬT | (mục 13): kết quả chưa xem được chèn làm lệnh ngắn cho **lượt kế tiếp** |
 | Chuyển sang tag khi AI bỏ qua tool roll | BẬT | Chế độ Auto: sau N reply AI liên tiếp không có roll, directive tag được thêm vào để nhắc |
 | Số reply không-tool trước khi chuyển | 3 | Chính là N (1–20). Có roll là reset; đổi chat hoặc bấm *Reset counter* trong Hub cũng reset |
 
@@ -236,7 +236,7 @@ Kiểm tra quy tắc per-character (mục 6) — override của nhân vật th�
 Mode là *Function Call only* nhưng model/API hiện tại không hỗ trợ function calling. Chuyển sang Auto hoặc Tag only — roll vẫn chạy qua tag.
 
 **AI có gian lận được không?**
-Không. Kết quả chỉ đến từ RNG của extension; tag bịa kết quả bị strip, ý định hỏng được sửa hoặc bị chặn, và marker trong tin nhắn không chứa số. Kênh duy nhất tới model là feed kết quả opt-in (mục 13), ra lệnh cho nó tường thuật hậu quả — không bao giờ đọc số dice.
+Không. Kết quả chỉ đến từ RNG của extension; tag bịa kết quả bị strip, ý định hỏng được sửa hoặc bị chặn, và marker trong tin nhắn không chứa số. Kênh duy nhất tới model là feed kết quả (mục 13, bật mặc định), ra lệnh cho nó tường thuật hậu quả — không bao giờ đọc số dice.
 
 ---
 

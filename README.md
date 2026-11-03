@@ -31,7 +31,7 @@ You play the story. The extension plays fair.
 
 - **Two trigger paths** — the AI either ends its reply with a `<roll>` intent tag, or calls a stealth `roll_dice` function tool when your model supports tool calling. Auto mode picks the right one and falls back gracefully.
 - **Real dice, real rules** — stat → modifier formula (`round(({stat}-50)/15)` by default), difficulty class (raw numbers or a named `easy/normal/hard/extreme` ladder), advantage/disadvantage plus penalty dice (`advp`/`disp`), natural-20-crit / natural-1-fumble, and multi-term formulas like `1d20+3`, `2d6+1d4` or damage rolls (`kind="damage"`). Penalty dice and damage rolls come from `<roll>` tags (penalty dice also from `/roll`, Quick roll and the API) — the `roll_dice` tool only offers plain `adv`/`dis` checks.
-- **Game-style result cards** — avatar, action, a big total with a clear outcome label (*Success / Fail / Nat 20 · Critical / Nat 1 · Fumble / Damage*) and a dice strip showing every die (dice dropped by advantage/disadvantage struck through), modifiers and DC — injected into the message, with re-roll and undo right on the card. Roll results stay out of the model's prompt (slim `[dice:#id]` markers, no numbers in text); optionally (opt-in, off by default) the last few unseen results are fed to the AI as a short instruction so it narrates their consequences.
+- **Game-style result cards** — avatar, action, a big total with a clear outcome label (*Success / Fail / Nat 20 · Critical / Nat 1 · Fumble / Damage*) and a dice strip showing every die (dice dropped by advantage/disadvantage struck through), modifiers and DC — injected into the message, with re-roll and undo right on the card. Roll results stay out of the model's prompt (slim `[dice:#id]` markers, no numbers in text); by default the last few unseen results are fed to the AI (tool-call rolls excluded — the model already got them; can be turned off) as a short instruction so it narrates their consequences.
 - **Forced trigger** — type your keyword and the next AI reply *must* roll if the situation calls for it.
 - **Roll Hub dashboard** — a button next to the input box with a live badge: a Quick roll form (same as `/roll`), success rate / Nat 20 / Nat 1 / average d20 stats, searchable/filterable roll history where **clicking a roll jumps to its message**, per-roll re-roll / undo / delete, bulk delete and JSON export.
 - **Per-character rules** — different formula, DC, triggers and an on/off switch for each character card, keyed to the card itself.
@@ -44,7 +44,7 @@ You play the story. The extension plays fair.
 
 ## Design principles
 
-- **The AI never rolls.** The model only declares *what* is attempted; the extension decides *how well*. Outcome data lives in the message payload and UI only — the model sees at most a short opt-in instruction to acknowledge the results, never dice numbers to invent.
+- **The AI never rolls.** The model only declares *what* is attempted; the extension decides *how well*. Outcome data lives in the message payload and UI only — the model sees at most a short instruction to acknowledge the results (on by default, can be turned off), never dice numbers to invent.
 - **Intent, not trust.** Malformed tags, truncated replies and tool-call-shaped text are recovered or rejected with guards; the model can't fake an outcome.
 - **Everything is local and per-chat.** Rolls live inside your chat save files. Nothing leaves your machine.
 - **Works with every model.** The tag protocol needs nothing special; function calling is used automatically when available.

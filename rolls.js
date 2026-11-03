@@ -360,7 +360,7 @@ export function createRollStore(deps) {
             return;
         }
         const settings = getSettings();
-        const extracted = extractRollTags(mes.mes, {
+        const tagOpts = {
             formula: settings.formula,
             crit20: settings.crit20,
             crit1: settings.crit1,
@@ -373,24 +373,63 @@ export function createRollStore(deps) {
                 const cs = getCharSettings(String(a.char ?? a.character ?? '').trim());
                 return { formula: cs.formula, crit20: cs.crit20, crit1: cs.crit1, dcDefault: cs.dc_default, dcLadder: cs.dc_ladder };
             },
-        });
-        const text = extracted.text;
+        };
+        const extracted = extractRollTags(mes.mes, tagOpts);
+        /* Re-parse of a tag that was ALREADY parsed: streaming fires
+           GENERATION_ENDED (fallback parse) before MESSAGE_RECEIVED, and a
+           slower async handler holding the raw reply can write the `<roll>`
+           tag back over our marker. Parsing it again rolled a second time —
+           2 payloads, 1 marker, the card showing the orphan's result. Reuse
+           the matching payload whose marker is gone instead (same id, same
+           dice), so a re-parse never re-rolls. */
+        const orphans = findOrphanRolls(mes);
+        const reused = new Set();
         /* Tag rolls are the most common path — stamp them through the payload
            factory like every other source (ts → Hub relative time). The id is
            preserved, so the markers already written into `text` still match. */
-        const rolls = extracted.rolls.map(roll => createRollPayload(roll));
-        if (rolls.length) {
+        const resolved = extracted.rolls.map(roll => {
+            const index = orphans.findIndex(orphan => sameRollTag(orphan, roll));
+            if (index === -1) return createRollPayload(roll);
+            const orphan = orphans.splice(index, 1)[0];
+            reused.add(orphan);
+            return orphan;
+        });
+        const text = reused.size ? extractRollTags(mes.mes, { ...tagOpts, rolls: resolved }).text : extracted.text;
+        const rolls = resolved.filter(roll => !reused.has(roll));
+        if (resolved.length) {
             mes.extra = mes.extra ?? {};
             mes.extra.diceRolls = [...(Array.isArray(mes.extra.diceRolls) ? mes.extra.diceRolls : []), ...rolls];
             recordRollsForSwipe(mes, rolls);
             mes.mes = text;
             if (typeof mes.extra.display_text === 'string') {
-                mes.extra.display_text = extractRollTags(mes.extra.display_text, { rolls }).text;
+                mes.extra.display_text = extractRollTags(mes.extra.display_text, { rolls: resolved }).text;
             }
             bumpRollsVersion();
             saveChatDebounced();
         }
-        renderMessageRolls(messageId, rolls.length > 0);
+        renderMessageRolls(messageId, resolved.length > 0);
+    }
+
+    /* Payloads of this message whose marker is no longer in its text. */
+    function findOrphanRolls(mes) {
+        const rolls = Array.isArray(mes?.extra?.diceRolls) ? mes.extra.diceRolls : [];
+        if (!rolls.length) return [];
+        const text = `${String(mes.mes ?? '')}\n${typeof mes.extra?.display_text === 'string' ? mes.extra.display_text : ''}`;
+        const present = new Set();
+        const re = new RegExp(MARKER_RE.source, MARKER_RE.flags);
+        let match;
+        while ((match = re.exec(text)) !== null) {
+            present.add((match[1] ?? '').toLowerCase());
+        }
+        return rolls.filter(roll => roll?.id && roll.source === 'tag' && !present.has(String(roll.id).toLowerCase()));
+    }
+
+    /* Same `<roll>` tag → same request (the dice result differs per parse). */
+    function sameRollTag(a, b) {
+        const key = roll => [roll.character, roll.action, roll.note, roll.stat_label, roll.dc, roll.adv, roll.kind, roll.roll_type, roll.formula_text]
+            .map(value => String(value ?? '').trim().toLowerCase())
+            .join('|');
+        return key(a) === key(b);
     }
 
     return {

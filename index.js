@@ -490,6 +490,9 @@ async function onToolCall(args) {
         ...result,
     });
     store.attachRoll(payload);
+    /* The tool result below already tells the model this outcome: don't feed
+       it again next turn (a re-roll unmarks it, so the new result is fed). */
+    resultsFeed.markSeen([payload.id]);
     const modPart = result.modifier >= 0 ? `+${result.modifier}` : String(result.modifier);
     const bonusPart = result.bonus > 0 ? `+${result.bonus}` : result.bonus < 0 ? String(result.bonus) : '';
     return `${rollType}: ${result.natural} ${modPart}${bonusPart} = ${result.total} vs DC ${dc} => ${result.outcome}`;

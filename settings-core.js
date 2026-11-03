@@ -15,8 +15,10 @@ export const DEFAULT_SETTINGS = {
     /* v0.5.0 P1: FC-miss tracking + tag fallback */
     fc_miss_threshold: 3,
     auto_fallback_to_tags: true,
-    /* v0.5.0 D1: roll results → AI context (opt-in, OFF by default) */
-    feed_results_to_ai: false,
+    /* v0.5.0 D1: roll results → AI context. ON by default (was opt-in): in Tag
+       mode (models without tool calling) the AI otherwise never learns the
+       outcome it should narrate. Tool-call rolls are skipped (already seen). */
+    feed_results_to_ai: true,
     /* v0.5.0 Phase 5: named DC ladder for tag attr / tool dc="hard" */
     dc_ladder: { easy: 5, normal: 10, hard: 15, extreme: 20 },
     /* UI language: English by default (v0.6.0); 'vi' or 'auto' (follow the

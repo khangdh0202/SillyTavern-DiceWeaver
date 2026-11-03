@@ -6,7 +6,18 @@ All notable changes to this project. Versions match `manifest.json`.
 
 Fixes on top of 0.6.0 (`manifest.json` still says 0.6.0).
 
+### Changed
+- **"Feed roll results to the AI" is on by default.** With models that cannot call tools (Tag
+  mode) the AI never learned the outcome it was supposed to narrate. Rolls made through the
+  `roll_dice` tool are marked seen at once (the tool result already told the model); a re-roll
+  is fed again. Existing installs keep their saved choice.
+
 ### Fixed
+- **One Tag roll counted twice (2 rolls, 1 marker)**: with streaming, the end-of-turn
+  fallback parse runs before MESSAGE_RECEIVED, and another extension's async handler could
+  write the raw `<roll>` tag back over the marker; the second parse rolled again and the card
+  showed the orphan's result. Re-parsing a tag now reuses the matching roll whose marker went
+  missing (same id, same dice) instead of rolling again.
 - **`roll_dice` tool rejected by strict providers**: the tool schema carried an invalid
   `$schema` meta-schema URI, and some providers refused the whole request. The key is gone.
 - **Bogus "the reply was cut off" rolls and duplicate rolls**: a message that is still
